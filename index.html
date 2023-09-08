@@ -1,56 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enviar Mensaje de WhatsApp</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Enviar Mensaje de WhatsApp</h1>
     <form id="whatsappForm">
-        <label for="recipient">Número de Destinatario:</label>
-        <input type="text" id="recipient" name="recipient" required>
-        <br>
-        <label for="message">Mensaje:</label>
-        <textarea id="message" name="message" required></textarea>
-        <br>
-        <button type="submit">Enviar Mensaje</button>
+      <label for="recipient">Número de Destinatario:</label>
+      <input type="text" id="recipient" name="recipient" required />
+      <br />
+      <label for="message">Mensaje:</label>
+      <textarea id="message" name="message" required></textarea>
+      <br />
+      <button type="submit">Enviar Mensaje</button>
     </form>
 
     <div id="result"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const form = document.getElementById('whatsappForm');
-        const resultDiv = document.getElementById('result');
+      const form = document.getElementById("whatsappForm");
+      const resultDiv = document.getElementById("result");
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            const apiSecret = "fc86a086e03f9260d2504bc3ee437864e82e183a";
-            const recipient = document.getElementById('recipient').value;
-            const message = document.getElementById('message').value;
+        const apiSecret = "fc86a086e03f9260d2504bc3ee437864e82e183a";
+        const recipient = document.getElementById("recipient").value;
+        const message = document.getElementById("message").value;
 
-            const chat = {
-                secret: apiSecret,
-                account: "16941982316c8349cc7260ae62e3b1396831a8398f64fb69d7161f1",
-                recipient: recipient,
-                type: "text",
-                message: message
-            };
+        const chat = {
+          secret: apiSecret,
+          account: "16941982316c8349cc7260ae62e3b1396831a8398f64fb69d7161f1",
+          recipient: recipient,
+          type: "text",
+          message: message,
+        };
 
-            axios.post("https://whats-flow.com/api/send/whatsapp", chat)
-                .then((response) => {
-                    // Mostrar la respuesta JSON en el div de resultado
-                    const result = response.data;
-                    resultDiv.textContent = JSON.stringify(result, null, 2);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    resultDiv.textContent = "Error al enviar el mensaje.";
-                });
-        });
+        const xhr = new XMLHttpRequest();
+        const url = "https://whats-flow.com/api/send/whatsapp";
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              const result = JSON.parse(xhr.responseText);
+              resultDiv.textContent = JSON.stringify(result, null, 2);
+            } else {
+              console.error(xhr.statusText);
+              resultDiv.textContent = "Error al enviar el mensaje.";
+            }
+          }
+        };
+
+        xhr.send(JSON.stringify(chat));
+      });
     </script>
-</body>
+  </body>
 </html>
-
